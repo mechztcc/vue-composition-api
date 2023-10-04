@@ -61,6 +61,7 @@
         </template>
       </el-card>
     </el-col>
+    <Test />
   </el-row>
 </template>
 
