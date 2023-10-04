@@ -53,10 +53,13 @@
                 type="primary"
                 size="large"
                 native-type="submit"
+                :loading="isFetching"
               >
                 Login
               </el-button>
             </el-form>
+
+            <span>{{ error }}</span>
           </div>
         </template>
       </el-card>
@@ -71,6 +74,9 @@
   import { toTypedSchema } from '@vee-validate/zod';
   import { ref } from 'vue';
   import * as zod from 'zod';
+  import { useFetch } from '@vueuse/core';
+
+  const url = 'https://reservadireta-hmg-api.info/auth/signin';
 
   const isHide = ref(true);
 
@@ -94,8 +100,11 @@
   const { value: email } = useField('email');
   const { value: password } = useField('password');
 
-  const onSubmit = handleSubmit((values) => {
-    console.log(values);
+  const onSubmit = handleSubmit(async () => {
+    const { isFetching, execute, error, data } = useFetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ email: email.value, password: password.value }),
+    });
   });
 </script>
 
