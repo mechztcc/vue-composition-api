@@ -14,26 +14,24 @@
                 <label for="email">Email</label>
                 <el-input
                   class="mt-5"
-                  v-model="email"
+                  v-model="form.email"
                   size="large"
                   data-cy="email"
-                  rules="required | email "
                 >
                   <template #prepend>
                     <el-button :icon="Message" />
                   </template>
                 </el-input>
               </div>
-              <span>{{ errors.email }}</span>
 
               <div class="d-flex-column mt-5">
-                <label for="email">Password</label>
+                <label for="password">Password</label>
                 <el-input
                   style="margin-top: 3%"
                   :type="isHide ? 'password' : 'text'"
                   size="large"
                   data-cy="password"
-                  v-model="password"
+                  v-model="form.password"
                 >
                   <template #prepend>
                     <el-button
@@ -46,13 +44,12 @@
                 </el-input>
               </div>
 
-              <span>{{ errors.password }}</span>
-
               <el-button
                 style="width: 100%; margin-top: 3%"
                 type="primary"
                 size="large"
                 native-type="submit"
+                :loading="isFetching"
               >
                 Login
               </el-button>
@@ -61,48 +58,38 @@
         </template>
       </el-card>
     </el-col>
-    <Test />
   </el-row>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { Lock, Message, Unlock } from '@element-plus/icons-vue';
-  import { useField, useForm } from 'vee-validate';
-  import { toTypedSchema } from '@vee-validate/zod';
-  import { ref } from 'vue';
-  import * as zod from 'zod';
-  import { useFetch } from '@vueuse/core';
+  import { ref, watch, reactive } from 'vue';
 
-  const url = 'https://reservadireta-hmg-api.info/auth/signin';
+  import { usePost } from '../composables/Api.ts';
 
   const isHide = ref(true);
-
-  const validationSchema = toTypedSchema(
-    zod.object({
-      email: zod
-        .string()
-        .nonempty('This is required')
-        .email({ message: 'Must be a valid email' }),
-      password: zod
-        .string()
-        .nonempty('This is required')
-        .min(8, { message: 'Too short' }),
-    })
-  );
-
-  const { handleSubmit, errors } = useForm({
-    validationSchema,
+  const form = reactive({
+    email: '',
+    password: '',
   });
 
-  const { value: email } = useField('email');
-  const { value: password } = useField('password');
-
-  const onSubmit = handleSubmit(async () => {
-    const { isFetching, execute, error, data } = useFetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ email: email.value, password: password.value }),
-    });
+  const payload = reactive({
+    email: '',
+    password: '',
   });
+
+  const { isFetching, data, execute } = usePost({
+    payload,
+  });
+
+  watch(form, () => {
+    payload.email = form.email;
+    payload.password = form.password;
+  });
+
+  const onSubmit = () => {
+    execute();
+  };
 </script>
 
 <style>
