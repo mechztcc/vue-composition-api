@@ -6,14 +6,12 @@ const url = 'https://reservadireta-hmg-api.info/auth/signin';
 export function usePost(request: IRequestPost) {
   const path = request.path ? `${url}/${request.path}` : url;
   return useFetch(`${path}`, {
-    immediate: false,
     beforeFetch({ options }) {
       const myToken = 'token';
       options.headers = {
         ...options.headers,
         Authorization: `Bearer ${myToken}`,
       };
-
       return {
         options,
       };

@@ -64,7 +64,7 @@
 <script setup lang="ts">
   import { Lock, Message, Unlock } from '@element-plus/icons-vue';
   import { ref, reactive } from 'vue';
-  import { useFetch } from '@vueuse/core';
+  import { usePost } from '../composables/usePost';
 
   const isHide = ref(true);
   const response = ref<any>({});
@@ -74,16 +74,9 @@
   });
 
   const onSubmit = async () => {
-    console.log('submit');
-
-    response.value = useFetch(
-      'https://reservadireta-hmg-api.info/auth/signin'
-    ).post({
-      email: form.email,
-      password: form.password,
+    response.value = usePost({
+      payload: { email: form.email, password: form.password },
     });
-
-    console.log(response.value);
   };
 </script>
 
@@ -99,4 +92,3 @@
     margin-top: 3%;
   }
 </style>
-../composables/usePost.ts
