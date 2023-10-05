@@ -24,6 +24,10 @@
                 </el-input>
               </div>
 
+              <small v-if="errorFields.email">{{
+                errorFields.email[0].message
+              }}</small>
+
               <div class="d-flex-column mt-5">
                 <label for="password">Password</label>
                 <el-input
@@ -43,6 +47,10 @@
                   </template>
                 </el-input>
               </div>
+
+              <small v-if="errorFields.password">{{
+                errorFields.password[0].message
+              }}</small>
 
               <el-button
                 style="width: 100%; margin-top: 3%"
@@ -65,15 +73,39 @@
   import { Lock, Message, Unlock } from '@element-plus/icons-vue';
   import { ref, reactive } from 'vue';
   import { usePost } from '../composables/usePost';
+  import type { Rules } from 'async-validator';
+  import { useAsyncValidator } from '@vueuse/integrations/useAsyncValidator';
 
   const isHide = ref(true);
   const response = ref<any>({});
+
   const form = reactive({
     email: '',
     password: '',
   });
 
+  const rules: Rules = {
+    password: {
+      type: 'string',
+      min: 5,
+      max: 12,
+      required: true,
+      message: 'Invalid Password',
+    },
+    email: [
+      {
+        type: 'email',
+        required: true,
+        message: 'Email is required field',
+      },
+    ],
+  };
+
+  const { pass, isFinished, errorFields } = useAsyncValidator(form, rules);
+
   const onSubmit = async () => {
+    if (!pass.value) return;
+
     response.value = usePost({
       payload: { email: form.email, password: form.password },
     });
