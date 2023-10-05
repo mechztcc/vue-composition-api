@@ -75,9 +75,12 @@
   import { usePost } from '../composables/usePost';
   import type { Rules } from 'async-validator';
   import { useAsyncValidator } from '@vueuse/integrations/useAsyncValidator';
+  import { useRouter } from 'vue-router';
 
   const isHide = ref(true);
   const response = ref<any>({});
+
+  const router = useRouter();
 
   const form = reactive({
     email: '',
@@ -101,14 +104,19 @@
     ],
   };
 
-  const { pass, isFinished, errorFields } = useAsyncValidator(form, rules);
+  const { pass, errorFields } = useAsyncValidator(form, rules);
 
   const onSubmit = async () => {
+    console.log(router);
     if (!pass.value) return;
 
-    response.value = usePost({
+    response.value = await usePost({
       payload: { email: form.email, password: form.password },
     });
+
+    if (response.value.data) {
+      router.push({ name: 'Signin' });
+    }
   };
 </script>
 
