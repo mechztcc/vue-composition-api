@@ -49,7 +49,7 @@
                 type="primary"
                 size="large"
                 native-type="submit"
-                :loading="isFetching"
+                :loading="response.isFetching"
               >
                 Login
               </el-button>
@@ -63,32 +63,27 @@
 
 <script setup lang="ts">
   import { Lock, Message, Unlock } from '@element-plus/icons-vue';
-  import { ref, watch, reactive } from 'vue';
-
-  import { usePost } from '../composables/Api.ts';
+  import { ref, reactive } from 'vue';
+  import { useFetch } from '@vueuse/core';
 
   const isHide = ref(true);
+  const response = ref<any>({});
   const form = reactive({
     email: '',
     password: '',
   });
 
-  const payload = reactive({
-    email: '',
-    password: '',
-  });
+  const onSubmit = async () => {
+    console.log('submit');
 
-  const { isFetching, data, execute } = usePost({
-    payload,
-  });
+    response.value = useFetch(
+      'https://reservadireta-hmg-api.info/auth/signin'
+    ).post({
+      email: form.email,
+      password: form.password,
+    });
 
-  watch(form, () => {
-    payload.email = form.email;
-    payload.password = form.password;
-  });
-
-  const onSubmit = () => {
-    execute();
+    console.log(response.value);
   };
 </script>
 
@@ -104,3 +99,4 @@
     margin-top: 3%;
   }
 </style>
+../composables/usePost.ts
