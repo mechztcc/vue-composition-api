@@ -20,5 +20,5 @@ export function usePost(request: IRequestPost) {
       alert(data);
       return data;
     },
-  }).post(request.payload);
+  }).post(request.payload).json();
 }

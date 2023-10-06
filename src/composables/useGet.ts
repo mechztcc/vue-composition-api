@@ -1,18 +1,19 @@
 import { useFetch } from '@vueuse/core';
 import { IRequestGet } from '../types/request.interface';
+import { useAppStore } from '../stores/useAppStore';
 
-const url = 'https://reservadireta-hmg-api.info/auth/signin';
+const url = 'https://reservadireta-hmg-api.info';
 
 export function useGet(request: IRequestGet) {
+  const store = useAppStore();
   const path = request.path ? `${url}/${request.path}` : url;
 
   return useFetch(`${path}`, {
-    immediate: false,
     beforeFetch({ options }) {
-      const myToken = 'token';
+      const myToken = store.token;
       options.headers = {
         ...options.headers,
-        Authorization: `Bearer ${myToken}`,
+        Authorization: myToken,
       };
 
       return {
@@ -23,5 +24,5 @@ export function useGet(request: IRequestGet) {
       alert(data);
       return data;
     },
-  });
+  }).json();
 }

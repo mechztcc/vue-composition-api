@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :sm="24" :md="24">
+    <el-col :sm="24" :md="{ span: 8, offset: 8 }">
       <el-card>
         <template #header>
           <div class="card-header">
@@ -76,11 +76,13 @@
   import type { Rules } from 'async-validator';
   import { useAsyncValidator } from '@vueuse/integrations/useAsyncValidator';
   import { useRouter } from 'vue-router';
+  import { useAppStore } from '../stores/useAppStore';
 
   const isHide = ref(true);
   const response = ref<any>({});
 
   const router = useRouter();
+  const store = useAppStore();
 
   const form = reactive({
     email: '',
@@ -114,7 +116,8 @@
     });
 
     if (response.value.data) {
-      router.push({ name: 'Signin' });
+      router.push({ name: 'Home' });
+      store.setUser(response.value.data);
     }
   };
 </script>
