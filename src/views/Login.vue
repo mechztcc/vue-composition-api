@@ -41,16 +41,16 @@
                     <el-button
                       @click="isHide = !isHide"
                       :icon="isHide ? Lock : Unlock"
-                      data-cy="submit"
+                      data-cy="lock"
                     >
                     </el-button>
                   </template>
                 </el-input>
               </div>
 
-              <small v-if="errorFields.password">{{
-                errorFields.password[0].message
-              }}</small>
+              <small v-if="errorFields.password">
+                {{ errorFields.password[0].message }}
+              </small>
 
               <el-button
                 style="width: 100%; margin-top: 3%"
@@ -107,7 +107,6 @@
   const { pass, errorFields } = useAsyncValidator(form, rules);
 
   const onSubmit = async () => {
-    console.log(router);
     if (!pass.value) return;
 
     response.value = await usePost({
